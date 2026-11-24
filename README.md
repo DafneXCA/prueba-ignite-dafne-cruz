@@ -28,28 +28,15 @@ El uso de IA durante la prueba invalidara la entrega.
 
 1. Clona el repositorio base:
 
-   ```bash
-   git clone --branch main --single-branch https://github.com/ignite-latam-online/prueba-ignite.git
-   cd prueba-ignite
-   ```
-
 2. En tu cuenta personal de GitHub, crea un repositorio **público y vacío**, por ejemplo `prueba-ignite-nombre-apellido`. Elige tu cuenta como propietaria y deja sin agregar README, licencia y `.gitignore`.
 
 3. Cambia el remoto del clon a tu repositorio personal. Sustituye `TU-USUARIO` y `prueba-ignite-nombre-apellido` por los datos de tu repo. Sube `main` una sola vez para publicar el código base.
 
-   ```bash
-   git remote set-url origin https://github.com/TU-USUARIO/prueba-ignite-nombre-apellido.git
-   git remote -v
-   git push -u origin main
-   ```
 
    Comprueba que `origin` apunta a tu cuenta personal antes de hacer push.
 
 4. Antes de resolver la prueba, crea una rama con tu nombre y apellido. Usa minúsculas y guiones, por ejemplo `solucion/ana-garcia`.
 
-   ```bash
-   git switch -c solucion/nombre-apellido
-   ```
 
 Haz los commits de las tres fases en esa misma rama y súbelos a tu repositorio personal. Mantén `main` con el código base.
 
