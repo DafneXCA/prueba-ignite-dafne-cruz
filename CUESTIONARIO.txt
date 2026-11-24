@@ -3,21 +3,12 @@ CUESTIONARIO TEÓRICO DE PROGRAMACIÓN Y BASES DE DATOS
 
 INSTRUCCIONES
 
-1. Responde las siete preguntas en este mismo archivo.
+1. Responde las preguntas en este mismo archivo.
 2. Escribe cada respuesta debajo de la etiqueta "RESPUESTA" correspondiente.
 3. No borres ni modifiques los enunciados.
 4. Puedes incluir código, pseudocódigo, fórmulas o consultas SQL.
 5. Si haces alguna suposición, indícala explícitamente.
 6. Cuando termines, guarda este mismo archivo, crea un commit y haz push a tu rama.
-
-Comandos sugeridos:
-
-git add CUESTIONARIO.txt
-git commit -m "Complete theoretical questionnaire"
-git push
-
-Tiempo sugerido: 45 a 60 minutos.
-
 
 ===============================================================================
 PREGUNTA 1 — PHP Y LARAVEL
@@ -36,7 +27,6 @@ Explica:
 - si es posible utilizar Laravel sin conocer PHP y por qué.
 
 RESPUESTA:
-
 
 
 
@@ -261,10 +251,49 @@ RESPUESTA:
 
 
 
+===============================================================================
+PREGUNTA 8 — ¿CÓMO APRENDE UNA RED NEURONAL?
+===============================================================================
+
+Explica con tus propias palabras qué significa entrenar una red neuronal. Describe 
+un ciclo de entrenamiento desde que la red recibe datos hasta que ajusta sus parámetros. 
+Incluye qué papel cumplen la predicción, la función de pérdida y la retropropagación.
+
+RESPUESTA:
+
+
+===============================================================================
+PREGUNTA 9 — ¿CÓMO FUNCIONA UN MODELO DE IA GENERATIVA DE TEXTO?
+===============================================================================
+
+¿Qué se entiende por procesamiento del lenguaje natural (PLN) y en qué se diferencia 
+una tarea generativa, como redactar un resumen, de una tarea como clasificar el tema de un texto?
+
+Explica qué son los tokens, qué aprende un modelo de lenguaje durante su entrenamiento y 
+cómo usa lo aprendido para generar texto. ¿Qué aportan los transformers y el mecanismo de atención? 
+Puedes usar un ejemplo breve, sin fórmulas.
+
+
+RESPUESTA:
+
+
+
+===============================================================================
+PREGUNTA 10 — ¿CÓMO DISEÑARIAS UNA APLICACIÓN DE IA GENERATIVA SIN APAGAR POR UNA API?
+===============================================================================
+
+Imagina que quieres construir una app que resuma textos en español usando una computadora que ya 
+tienes, sin contratar servicios de pago. ¿Qué modelo o herramientas elegirías? Explica dónde se ejecutaría 
+el modelo, cómo manejarías textos largos y qué limitaciones esperarías en memoria, velocidad y calidad.
+
+Menciona dos técnicas de prompting que aplicarías, explica para qué sirve cada una y escribe un ejemplo 
+breve de prompt para obtener un resumen con un formato definido.
+
+RESPUESTA:
+
+
 
 ===============================================================================
 FIN DEL CUESTIONARIO
 ===============================================================================
 
-Antes de entregar, verifica que respondiste las siete preguntas y que el
-archivo continúa llamándose CUESTIONARIO.txt.
