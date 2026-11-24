@@ -1,0 +1,9 @@
+/.phpunit.cache
+/.idea
+/.vscode
+/.env
+/vendor
+/storage/*.key
+/auth.json
+Thumbs.db
+.DS_Store

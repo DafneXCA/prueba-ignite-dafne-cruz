@@ -1,0 +1,270 @@
+PRUEBA WINKEL — FASE 1
+CUESTIONARIO TEÓRICO DE PROGRAMACIÓN Y BASES DE DATOS
+
+INSTRUCCIONES
+
+1. Responde las siete preguntas en este mismo archivo.
+2. Escribe cada respuesta debajo de la etiqueta "RESPUESTA" correspondiente.
+3. No borres ni modifiques los enunciados.
+4. Puedes incluir código, pseudocódigo, fórmulas o consultas SQL.
+5. Si haces alguna suposición, indícala explícitamente.
+6. Cuando termines, guarda este mismo archivo, crea un commit y haz push a tu rama.
+
+Comandos sugeridos:
+
+git add CUESTIONARIO.txt
+git commit -m "Complete theoretical questionnaire"
+git push
+
+Tiempo sugerido: 45 a 60 minutos.
+
+
+===============================================================================
+PREGUNTA 1 — PHP Y LARAVEL
+===============================================================================
+
+¿Cuál es la diferencia entre PHP y Laravel?
+
+Explica:
+
+- qué es PHP;
+- qué es Laravel;
+- qué proporciona Laravel sobre PHP;
+- al menos cuatro funcionalidades propias de Laravel;
+- un caso en el que usarías PHP sin framework;
+- un caso en el que elegirías Laravel;
+- si es posible utilizar Laravel sin conocer PHP y por qué.
+
+RESPUESTA:
+
+
+
+
+===============================================================================
+PREGUNTA 2 — ESTRUCTURAS DE DATOS
+===============================================================================
+
+Selecciona la estructura de datos más apropiada para cada caso:
+
+1. Procesar solicitudes en el orden en que llegaron.
+2. Implementar la función "deshacer" de un editor.
+3. Buscar rápidamente un usuario mediante un identificador único.
+4. Representar las conexiones entre usuarios de una red social.
+
+Para cada caso explica:
+
+- la estructura elegida;
+- cómo funciona;
+- el costo aproximado de insertar, buscar o retirar elementos;
+- una alternativa y por qué sería mejor o peor.
+
+RESPUESTA:
+
+
+
+
+===============================================================================
+PREGUNTA 3 — PROBLEMA SENCILLO DE PHP
+===============================================================================
+
+Implementa la siguiente función PHP:
+
+function countWords(string $text): array
+{
+    // Implementación
+}
+
+La función debe:
+
+- convertir el texto a minúsculas;
+- ignorar signos de puntuación;
+- separar las palabras aunque existan varios espacios;
+- ignorar elementos vacíos;
+- contar cuántas veces aparece cada palabra;
+- ordenar el resultado de mayor a menor frecuencia;
+- en caso de empate, ordenar alfabéticamente;
+- devolver un arreglo asociativo.
+
+Ejemplo:
+
+$text = 'PHP es útil. Laravel usa PHP; PHP es un lenguaje.';
+
+Resultado esperado:
+
+[
+    'php' => 3,
+    'es' => 2,
+    'laravel' => 1,
+    'lenguaje' => 1,
+    'un' => 1,
+    'usa' => 1,
+    'útil' => 1,
+]
+
+Explica:
+
+- las funciones de PHP que utilizaste;
+- cómo manejaste la puntuación y los espacios;
+- qué sucede si el texto está vacío;
+- cómo harías que funcione correctamente con Unicode y acentos.
+
+RESPUESTA:
+
+
+
+
+===============================================================================
+PREGUNTA 4 — COMPLETAR CONSULTA SQL
+===============================================================================
+
+Considera estas tablas PostgreSQL:
+
+users
+-----
+id          BIGINT PRIMARY KEY
+name        VARCHAR(255)
+email       VARCHAR(255)
+
+orders
+------
+id          BIGINT PRIMARY KEY
+user_id     BIGINT REFERENCES users(id)
+status      VARCHAR(30)
+total       NUMERIC(12,2)
+created_at  TIMESTAMP
+
+Completa la consulta para obtener todos los usuarios, incluyendo aquellos que
+no tienen compras aprobadas en los últimos 30 días.
+
+El resultado debe contener:
+
+- user_id;
+- name;
+- approved_order_count;
+- total_spent.
+
+Los usuarios sin compras deben mostrar 0. El resultado debe ordenarse desde el
+mayor total gastado hasta el menor.
+
+SELECT
+    u.id AS user_id,
+    u.name,
+    ______________________________ AS approved_order_count,
+    ______________________________ AS total_spent
+FROM users u
+______________________________ orders o
+    ON ______________________________
+    AND o.status = 'APPROVED'
+    AND o.created_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'
+GROUP BY ______________________________
+ORDER BY ______________________________;
+
+Explica:
+
+- por qué elegiste ese tipo de JOIN;
+- por qué los filtros de estado y fecha deben colocarse en esa cláusula;
+- para qué sirve COALESCE;
+- qué sucedería si los filtros se colocaran directamente en WHERE.
+
+RESPUESTA:
+
+
+
+
+===============================================================================
+PREGUNTA 5 — ÍNDICES Y OPTIMIZACIÓN
+===============================================================================
+
+Una tabla orders contiene varios millones de registros y se ejecuta
+frecuentemente esta consulta:
+
+SELECT id, user_id, total, created_at
+FROM orders
+WHERE user_id = :user_id
+  AND status = 'APPROVED'
+  AND created_at >= :start_date
+ORDER BY created_at DESC;
+
+Propón uno o más índices PostgreSQL para mejorarla.
+
+Incluye:
+
+- las sentencias CREATE INDEX;
+- el orden de las columnas;
+- si utilizarías un índice completo o parcial;
+- cómo comprobarías si PostgreSQL utiliza el índice;
+- las desventajas de agregar demasiados índices;
+- en qué situaciones PostgreSQL podría decidir no utilizar el índice.
+
+RESPUESTA:
+
+
+
+
+===============================================================================
+PREGUNTA 6 — PROCESO DE CI/CD
+===============================================================================
+
+Explica paso a paso cómo implementarías un proceso de CI/CD para una aplicación
+Laravel almacenada en GitHub. La explicación debe comenzar desde que un
+desarrollador crea un commit y terminar con la aplicación desplegada en
+producción.
+
+Incluye:
+
+- diferencia entre integración continua, entrega continua y despliegue continuo;
+- qué sucede después de un git push;
+- instalación de dependencias;
+- validación de formato o análisis estático;
+- pruebas unitarias y de integración;
+- construcción del artefacto;
+- manejo de variables de entorno y secretos;
+- despliegue a un ambiente de pruebas;
+- aprobación manual, si la utilizarías;
+- migraciones de base de datos;
+- despliegue a producción;
+- monitoreo posterior;
+- estrategia de rollback;
+- qué debería suceder cuando una prueba falla.
+
+Puedes incluir un diagrama o un ejemplo de GitHub Actions.
+
+RESPUESTA:
+
+
+
+
+===============================================================================
+PREGUNTA 7 — APIS HTTP Y CÓDIGOS DE RESPUESTA
+===============================================================================
+
+Explica cómo funciona una API HTTP desde que un cliente envía una solicitud
+hasta que recibe una respuesta.
+
+Incluye:
+
+- diferencias entre GET, POST, PUT, PATCH y DELETE;
+- qué significa que una operación sea idempotente;
+- diferencia entre autenticación y autorización;
+- diferencia entre los códigos 401 y 403;
+- cuándo utilizarías 200, 201, 204, 400, 404, 409, 422 y 500;
+- qué información no debería exponerse en una respuesta de error;
+- cómo diseñarías una respuesta JSON consistente para errores.
+
+Incluye ejemplos de:
+
+- una solicitud exitosa;
+- un error de validación;
+- un intento de acceso sin autenticación.
+
+RESPUESTA:
+
+
+
+
+===============================================================================
+FIN DEL CUESTIONARIO
+===============================================================================
+
+Antes de entregar, verifica que respondiste las siete preguntas y que el
+archivo continúa llamándose CUESTIONARIO.txt.
