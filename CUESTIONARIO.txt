@@ -28,6 +28,25 @@ Explica:
 
 RESPUESTA:
 
+- PHP (Hypertext Preprocessor) es un lenguaje interpretado open source, usado principalmente para aplicaciones web
+- Laravel un framework escrito en PHP, basado en MVC
+- Proporciona un marco de trabajo y herramientas utiles para facilitar el desarrollo de aplicaciones web en PHP, aporta funcionalidades como
+    manejo de datos, tareas en segundo plano, autenticacion sin tener que implementarlo desde 0
+- Funcionalidades propias de Laravel:
+    * Autenticacion: Laravel Sanctum
+    * Manejo de rutas y rate limit: Rutas asociadas a un controlados, el rate limit ayuda con ataques de tipo DOS, controlando cuantas solicitudes puede hacer un cliente en cierto tiempo
+    * Middlewares: Permite añadir logica antes de que el request llegue al controlador
+    * Validacion de requests: Permite validar los campos que trae el request (required, min, max, exists, etc.)
+    * ORM: Representa las tablas de la DB como clases
+    * Migraciones: Ayuda a versionar el esquema de la DB
+    * Manejo de cache: Locks atomicos para manejar la concurrencia
+    * Jobs: Ejecucion de tareas en segundo plano
+    * Queue: Es donde los jobs esperan para ser procesados
+    * Ejecucion de commandos programados (Scheduler): Tareas programadas que se ejecutan en cierta hora o cada cierto tiempo
+    * Collections: Collecciones de objetos sobre los cuales puedo realizar operacioens como map, filter, groupBy, sum
+- Usaria solo PHP para tareas aplicaciones web o tareas simples que no tenga mucha complejidad, por ejemplo una aplicacion web en la cual necesite manejo de archivos, sin autenticacion, sin un gran volumen de usuarios o mas funcionalidades que si bien se pueden hacer sin necesidad del framwork requieren implementacion de mas logica
+- Usaria Laravel para aplicaciones web que requieren ser escalables y tienen mayor complejidad que requiere algunas de las funcionalidades que ofrece laravel, para facilitar el desarrollo de la aplicacion, como por ejemplo un sistema donde necesite ejecutar tareas programadas a cierta hora, realizar el manejo de tareas en segundo plano como por ejemplo importaciones, exportanciones de un gran volumen de datos, requieran autenticación, cache locks para manejar la concurrencia, etc.
+- Es posible pero no recomendable, porque la sintaxis que se usa para declaracion de funciones, variables, clases es la de PHP entonces se requiere tener conocimiento en cuanto a la sintaxis, semantica que maneja el lenguaje
 
 
 ===============================================================================
@@ -50,9 +69,41 @@ Para cada caso explica:
 
 RESPUESTA:
 
+1. Una cola FIFO (First In First Out)
+Cada elemento añadido a la cola va al final y el orden para procesar es el primero que entro es el primero en salir, por lo que cuando se procesa devuelve el primer elemento de la cola
+Costos:
+- Insertar: O(1) Siempre se añade al final
+- Buscar: O(n) recorre cada elemento en la cola hasta encontrar el que buscamos
+- Retirar: O(1) Siempre devuelve el primer elemento
 
+Una alternativa un arreglo simple, donde añado al final y obtengo el primero con array_shift(), al retirar el primer elemento el array se reindexa por lo que cuesta mas, es peor por que el costo es O(n)
 
+2. Pila
+Cada elemento añadido, esta en un stack, al hacer pop se saca solo el ultimo elemento añadido a la pila y push para añadir otro elemento
+Costos:
+- Insertar: O(1) Siempre se añade encima (final)
+- Buscar: O(n) debe hacer recorrer cada elemento que contiene el stack hasta encontrar el elemento
+- Retirar: O(1) El pop devuelve el ultimo
 
+Una alternativa puede ser una lista enlazada (doble enlace circular) de esta forma puedo saber cual fue el ultimo desde el primer elemento, el problema es que se tiene  que manejar las referencias de los nodos lo cual hace mas complejo una operacion de eliminacion o insercion a comparacion de una pila
+
+3. Hash Map
+Es una estructura clave-valor que solo admite claves unicas (no repetidos), se puede acceder al valor usando la clave
+Costos (Sin colisiones) (Peor de los casos, con colisiones pueden ser O(n)):
+- Insertar: O(1)
+- Buscar: O(1)
+- Retirar: O(1)
+
+Una alternativa puede ser un arbol binario para busquedas ordenadas, mantiene claves unicas por lo que seria una opcion cercana a Hash map, pero el costo de operaciones (insertar, eliminar y buscar) aumenta dependiendo el tamaño del arbol
+
+4. Grafo (Lista de Adyacencia)
+Consta de vertices y aristas, los vertices serian los usuarios y las aristas ayudan a representar las conexiones entre usuarios, esto representado en una lista de adyacencia podemos usar un hash map para tener identificadores unicos de usuarios y dentro de estos un Hash Set que guarda valores unicos, de esta forma no se repite una misma conexion
+Costos (Sin colisiones, con colisiones O(n+cantidad de conexiones))
+- Insertar: O(1)
+- BUscar: O(1)
+- Eliminar: O(1)
+
+Una alternativa grafo (Matriz de Adyacencia) con N usuarios se tiene NxN
 ===============================================================================
 PREGUNTA 3 — PROBLEMA SENCILLO DE PHP
 ===============================================================================
@@ -100,8 +151,46 @@ Explica:
 
 RESPUESTA:
 
+function countWords(string $text): array
+{
+    $text = mb_strtolower($text, 'UTF-8');
+    $text = preg_replace('/[^\p{L}\p{N} ]/u', ' ', $text);
+    $text = trim($text);
 
+    $words = preg_split(pattern: '/ +/u', subject: $text, flags: PREG_SPLIT_NO_EMPTY);
+    if ($words === '[]) {
+        return [];
+    }
 
+    $words_count = array_count_values($words);
+
+    $collator = new Collator('root');
+    uksort($words_count, function ($a, $b) use ($words_count, $collator) {
+        $res = $words_count[$b] <=> $words_count[$a];
+
+        return $res !== 0 ? $res : collator_compare($collator, (string) $a, (string) $b);
+    });
+
+    return $words_count;
+}
+
+- las funciones de PHP que utilizaste
+Las funciones usadas fueron las siguientes:
+    * trim: Eliminar espacios al incio y final del texto
+    * mb_strtolower: Convierte a minusculas tomando en cuenta Unicode (strtolower solo convierte los caracteres ASCII)
+    * preg_replace: Reemplaza en este caso el regex por un espacio, el regex convierte lo que no es una letra o numero, en un espacio, asi eliminamos los caracteres especiales
+    * preg_split: Separa la cadena por la expresion regular, es decir un espacio o mas de un espacio, la flag es para que devuelva todas las piezas no vacias
+    * array_count_values: Cuenta las ocurrencias de cada valor en un array
+    * collator_compare: Compara 2 cadenas Unicode
+
+- cómo manejaste la puntuación y los espacios
+La puntuacion fue eliminada de la cadena y los espacios usados para separar las palabras y asi poder obtener solo palabras y no cadenas vacias
+
+- qué sucede si el texto está vacío;
+Devuelve un arreglo vacio, no hay palabras para contar
+
+- cómo harías que funcione correctamente con Unicode y acentos.
+Usando mb_strtolower, porque strtolower solo convierte ASCII, el modificador /u en el regex ya reconoce ñ, á, é, etc.
 
 ===============================================================================
 PREGUNTA 4 — COMPLETAR CONSULTA SQL
@@ -158,8 +247,30 @@ Explica:
 
 RESPUESTA:
 
+SELECT
+    u.id AS user_id,
+    u.name,
+    COUNT(o.id) AS approved_order_count,
+    COALESCE(SUM(o.total), 0) AS total_spent
+FROM users u
+LEFT JOIN orders o
+    ON o.user_id = u.id
+    AND o.status = 'APPROVED'
+    AND o.created_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'
+GROUP BY u.id, u.name
+ORDER BY total_spent DESC;
 
+- por qué elegiste ese tipo de JOIN;
+Elegi left join porque se debe tomar en cuenta los usuarios que no tienen orders tambien por lo que necesito conservar los rows de la tabla user pero unir las orders de los usuarios que si tienen
 
+- por qué los filtros de estado y fecha deben colocarse en esa cláusula;
+Porque solo necesito los orders approved, no necesito joins innecesarios que no cumplen con el criterio del enunciado
+
+- para qué sirve COALESCE;
+Para devolver el primer valor que no sea NULL, es necesario en la consulta porque los usuarios que no tienen orders devuelven NULL
+
+- qué sucedería si los filtros se colocaran directamente en WHERE.
+Si se coloca en un WHERE todos aquellos usuarios que no tienen ninguna order seran eliminados
 
 ===============================================================================
 PREGUNTA 5 — ÍNDICES Y OPTIMIZACIÓN
@@ -188,8 +299,37 @@ Incluye:
 
 RESPUESTA:
 
+- las sentencias CREATE INDEX;
+(Suponiendo una base de datos PostgreSQL, soporta indice parcial)
+CREATE INDEX idx_orders_approved_user_created
+ON orders (user_id, created_at DESC)
+WHERE status = 'APPROVED';
 
+- el orden de las columnas;
+El orden de las columnas depende de las operaciones:
+    1. Operaciones de igualdad
+    2. Operaciones de rango o sort
 
+- si utilizarías un índice completo o parcial;
+En este caso usaria un indice parcial, porque la consulta pregunta por un status especifico, y el index solo tomara en
+cuenta ese estado antes de modificar los indices, asi se reduce el tiempo de escritura en la DB
+
+- cómo comprobarías si PostgreSQL utiliza el índice;
+Para comprobar que se esta usando el index, se necesita revisar el plan con EXPLAIN, aqui podemos verificar si es que
+usa el index
+
+- las desventajas de agregar demasiados índices;
+Las desventajas de agregar demasiados indices, es que las conusltas de insert, update y delete son mas costosas porque
+necesitan actualizar la tabla de index, por lo que por cada indice añadido se añade tiempo de procesamiento para
+operaciones de escritura, por eso es que se debe tomar en cuenta que tan frequente se realizan operaciones de lectura y
+escritura en la tabla, si es una tabla a la cual consultan seguido pero los registros casi no se añaden es mejor añadir
+un indice, si se escribe mas de lo que se lee es mejor no añadir un indice, se debe tomar en cuenta el explain y
+realizar pruebas para ver cuanto demora con y sin el indice para asi ver si es que realmente se esta optimizando la
+consulta y que tan significativa es la optimizacion
+
+- en qué situaciones PostgreSQL podría decidir no utilizar el índice.
+    * Cuando la consulta es por ejemplo en otra columna que el index no incluye, no hay necesidad de usarlo
+    * Cuando la condicion del indice parcial no esta en la consulta
 
 ===============================================================================
 PREGUNTA 6 — PROCESO DE CI/CD
@@ -221,7 +361,68 @@ Puedes incluir un diagrama o un ejemplo de GitHub Actions.
 
 RESPUESTA:
 
+- diferencia entre integración continua, entrega continua y despliegue continuo;
+    * Integracion Continua: Su objetivo es automatizar todas las tareas repetitivas hasta llegar a la etapa de los test
+        de integracion, donde se pueden detectar fallos cuanto antes
+    * Entrega Continua: Se refiere a los cambios que se implementa en una aplicacion hasta llegar a los test de
+        aceptacion (QA), para que luego se pueda implementar en un entorno de producicon en vivo
+    * Despliegue Continuo: Hace referencia a la liberacion automatica de los cambios implementa
+        el equipo de desarrollo desde el repositorio hasta la puesta en marcha de produccion
 
+- qué sucede después de un git push;
+    Se debe abrir un PR y se ejecuta el pipeline donde pasa por el build, unit test, code analysis, create test env & deploy, Regression test,
+    Performance test, etc.
+
+- instalación de dependencias;
+    En laravel se usa el comando "composer install", lo cual instala todas las dependencias que estan en el archivo composer.lock
+    En el caso del frontend "npm ci" que instala las dependencias que estan  en package-lock.json
+
+- validación de formato o análisis estático;
+    La validacion de formato -> Laravel Pint
+    Analisis estático -> PHPStan
+
+- pruebas unitarias y de integración;
+    Con el comando php artisan test --env=test para que las pruebas se ejecuten en un entorno de prueba, apuntando a una
+    DB de prueba y tener valores del env que no apunten a un entorno real, ya que para los test se usan mocks
+
+- construcción del artefacto;
+    Se genera el ejecutable de la aplicacion para ser desplegada, en el caso de DOcker se genera la imagen Docker y
+    almacenarse en un lugar donde los servidores puedan descargarla
+
+- manejo de variables de entorno y secretos;
+    Se requieren diferentes archivos .env para cada entorno separado, debido a las credenciales ya sea de alguna integracion,
+    DB, Configuracion de Mail, etc. No se puede usar el mismo archivo .env para todos los entornos (dev, staging, prod),
+    este archivo al contener configuraciones, api keys, etc no debe ser subido al repositorio en ninguna circunstancia
+    se estaria exponiendo claves
+    En Docker los .env no estan en la imagen, se puede usar GitHub Enviroments para los valores que se requieran en el .env
+
+- despliegue a un ambiente de pruebas;
+    Se puede tener 2 ambientes de prueba dev y staging (staging es el entorno mas cercano a produccion), se debe ejecutar
+    el artefacto (ejecutable) que se genero antes, se deben ejecutar comandos como limpieza de cache, optimizacion y
+    ejecutar las migraciones
+
+- aprobación manual, si la utilizarías;
+    (Nunca use esta opcion en produccion) Sin embargo parece ayuda a tener mayor control sobre cuando se desplegaria
+    la ultima version del producto, debido a que requiere la autorizacion de los revisores
+
+- migraciones de base de datos;
+    Se deben ejecutar las migraciones para mantener la DB actualizada con los cambios en tablas o creacion de nuevas tablas
+    el comando que debe ejecutarse es "php artisan migrate", en Docker se ejecuta en la consola del contenedor
+
+- despliegue a producción;
+    Se usa el ejecutable generado, el servidor debe tener los requisitos necesarios
+    En Docker se descarga la imagen y se actualiza los contenedores de produccion
+
+- monitoreo posterior;
+    Se debe comprobar que la aplicacion este viva, que no haya quedado funcionalidad antigua
+    cacheadas
+
+- estrategia de rollback;
+    En Docker se mantienen  versiones anteriores de las imagenes, si se requiere hacer rollback se usa la imagen anterior,
+    tambien se debe hacer rollback de las migraciones
+
+- qué debería suceder cuando una prueba falla.
+    Cuando una prueba falla se detiene el pipeline, el resto de pasos queda pendiente
 
 
 ===============================================================================
@@ -249,7 +450,59 @@ Incluye ejemplos de:
 
 RESPUESTA:
 
+Como funciona una API HTTP:
+ user -> request (POST, PUT, PATCH, DELETE, GET) -> middleware -> Validation request -> Controller -> Execute logic to handle the request -> Response -> usert
 
+ - diferencias entre GET, POST, PUT, PATCH y DELETE
+ * GET: Sirve para pedir un recurso al servidor
+ * POST: Sirve para crear un nuevo recurso el servidor
+ * PUT: Sirve para reemplazar un recurso del servidor, es envia el recurso completo con sus cambios
+ * PATCH: Sirve para actualizar un recurso del servidor de forma parcial, es decir solo es necesario enviar los campos que se actualizaran al servidor
+ * DELETE: Sirve para eliminar un recurso del servidor
+
+ - qué significa que una operación sea idempotente;
+ Una operacion idempotente es cuando usuario repite el mismo request, el resultado del servidor debe ser siempre el mismo,
+ por ejemplo un usuario que esta realizando un pago o esta guardando un nuevo usuario, si se envia al servidor los requests multiples veces,
+ el servidor devuelve la misma respuesta y esta solo se realiza la peticion una vez
+
+ - diferencia entre autenticación y autorización;
+ * Authenticacion: es el proceso mediante el cual el usuario se identifica en nuestro sistema
+ * Autorizacion: es lo que el usuario tiene permitido hacer en el sistema, puede estar autenticado pero si no tiene permisos
+    de modificacion en X recurso el servidor debe responder con un 403 a su request
+
+ - diferencia entre los códigos 401 y 403;
+ 401: Usuario no authenticado realizo una peticion a un endpoint que requiere autenticacion
+ 403: Un usuario authenticado realizo una peticion a la cual no esta autorizado hacer o ver
+
+ - cuándo utilizarías 200, 201, 204, 400, 404, 409, 422 y 500;
+ * 200: OK - Cuando un request realizo satisfactoriamente la peticion del usuario
+ * 201: Created - Cuando se creo un recurso en el servidor cumpliendo la peticion del usuario
+ * 204: No Content - Cuando la solicitud se ejecuto, se proceso pero no hay nada que devolver al usuario
+ * 400: Bad Request - Cuando el cliente realizo de forma incorrecta el request, no es lo que nuestro servidor espera
+ * 404: Not Found - Cuando el recurso que solicito el cliente no existe o al menos no en la direccion que el cliente solicito
+ * 409: Conflict - Cuando hay conflicto con el estado actual del servidor
+ * 422: Unprocessable Content - Cuando el request no cumple con las validaciones
+ * 500: Internal Server Error - Un error en el lado del servidor y no pudo procesarse la solicitud del cliente
+
+ - qué información no debería exponerse en una respuesta de error;
+ * No deben exponerse stack traces, consultas SQL, el error debe ser claro para el cliente
+    sin exponer informacion del servidor, como archivos, variables, constantes, etc
+
+ - cómo diseñarías una respuesta JSON consistente para errores.
+Cada error debe tener un handler por tipo de error, y uno generico por si el tipo de error no es conocido,
+deberia analizar el sistema, y primero estandarizar todas las respuestas a los codigos HTTP que uso, luego si son errores
+mas especificos detro una integracion, o el consumo de alguna API, etc. deberia tener estandarizada la respuesta segun el feature relacionado
+de esta forma con un formato definido por features, tendre mas informacion de donde paso, en que funcionalidad y podre dar mensajes claros al cliente
+sobre lo que esta fallando
+
+Ejemplo de un 422:
+{
+    "message": "Datos invalidos"
+    "errors": {
+        "name": ["No puede ser vacio"],
+        "last_name": ["No se admiten números"]
+    }
+}
 
 ===============================================================================
 PREGUNTA 8 — ¿CÓMO APRENDE UNA RED NEURONAL?
@@ -261,6 +514,20 @@ Incluye qué papel cumplen la predicción, la función de pérdida y la retropro
 
 RESPUESTA:
 
+Entrenar una red neuronal es el proceso de ir ajustando sus pesos para que su prediccion se acerque a la repsuesta correcta
+
+Un usuario quiere predecir cuanto gastara al mes por ejemplo:
+Se debe tener un dataset para que el modelo entrene es decir, la informacion y el resultado acertado
+
+Usuario -> envia informacion (edad, sueldo) -> la red neuronal obtiene las caracteristicas importantes en sus vertices y
+los pesos estan en las aristas -> obtiene una prediccion -> verifica que tan lejos estuvo de la respuesta correcta ->
+Calcula la gradiente para que el optimizador ajuste los pesos -> Optimizador ajusta los pesos -> vuele a recibir informacion
+y el ciclo se repite
+
+* Prediccion: Es la salida que el usuario espera obtener de forma precisa, el dataset ya deberia tener las respuestas correctas
+    para que el modelo entrene y sea capaz de acertar en la prediccion
+* Funcion de perdida: Es el calculo de que tan lejos estuvo la prediccion de la respuesta correcta
+* Retropropagacion: Basado en la funcion de perdida, se revisa los pesos y cuanto influyeron cada uno a la respuesta sea incorrecta
 
 ===============================================================================
 PREGUNTA 9 — ¿CÓMO FUNCIONA UN MODELO DE IA GENERATIVA DE TEXTO?
@@ -275,7 +542,18 @@ Puedes usar un ejemplo breve, sin fórmulas.
 
 
 RESPUESTA:
+PLN: Trata de entender y generar el lenguaje natural, obtener informacion de sentimientos, contexto, etc.
+Tarea generativa: A partir de las intrucciones de un usuario genera un objeto nuevo, puede ser un documento, una imagen, resumen, etc.
 
+Tokens: Son la representacion numerica de las palabras, fragmentos
+
+Que aprende un modelo de lenguaje durante su entrenamiento: Aprende a asociar el contexto de las palabras, para poder predecir la siguiente,
+    usa lo aprendido en tareas generativas, una vez aprende a asociar el contexto de las palabras es capaz de predecir la siguiente,
+    y asi continuamente hasta dar la respuesta que el usuario busca.
+
+Transformers: Arquitectura de red neuronal para procesar sequencias de texto, tiene la finalidad de entender las relaciones entre palabras
+
+Mecanismo de atencion: Permite que el modelo sea capaz de identificar que palabras son mas importantes que otras
 
 
 ===============================================================================
@@ -291,7 +569,57 @@ breve de prompt para obtener un resumen con un formato definido.
 
 RESPUESTA:
 
+Modelo: onnx-community/Qwen2.5-0.5B-Instruct (Hugging Face)
+Version: Q4F16
+    Elegi este modelo porque se ajusta al requerimiento de resumir textos en español y el modelo tiene un tamaño de 483 MB
+    modelos mas precisos tienen un mayor tamaño, pero al ejecutarse del lado del cliente por ejemplo el modelo
+    (ELiRF/mt5-base-dacsa-es) tiene un tamaño de 2.33 GB aunque tiene mejores resultados, creo que es importante mantener la
+    disponibilidad de uso para todos los usuarios por lo que usuarios con computadores de menor capacidad no podran ser capaces
+    de usar la aplicacion
 
+Herramienta: Transformers.js (permite cargar modelos de IA localmente)
+Donde se ejecutaría: En el navegador del usuario consumiendo los recursos de la computadora: GPU, CPU(lento), RAM
+    (Otra opcion): Configurar un servidor gratuito, donde instalar el modelo para que consuma recursos del servidor,
+    seria una opcion mas centralizada, pero un servidor gratuito suele tener pocos recursos, ademas de que segun el volumen
+    de usuarios este puede tener respuestas muy lentas para los usuarios o no poder procesar las peticiones
+
+Como manejaria textos largos: Chunking, dividir el texto en fragmentos mas cortos con solapamiento para no perder el contexto
+    y mandar a resumir, al final juntar todos los resumenes enviandolos
+    nuevamente a la IA para obtener un resumen consistente
+
+Limitaciones:
+    * Memoria: El modelo necesita memoria para cargar los pesos, ejecutar cálculos y almacenar datos intermedios (depende del usuario)
+    * Velocidad: El procesamiento dependerá de la capacidad del CPU o GPU de la computadora
+    * Calidad: Al ser un modelo pequeño es menos preciso y puede perder contexto
+
+Técnicas de prompting:
+    * Role Prompting: Al definir un rol en la solicitud del sistema, se define el comportamiento y el tono del modelo para cada caso de uso
+    * Few-Shot Prompting: Tecnica para permitir el aprendizaje en contexto, proporcionando demostraciones que sirven como condicionamiento
+        para generar una respuesta con ese formato
+
+    (Los prompts son mas eficientes en ingles)
+    "You are an assistant specialized in summarizing documents written in Spanish **Always respond in Spanish**
+     Analyze the text and identify the most relevant information and key points, do not add
+     or invent information that is not present in the original document.
+
+     Use the following format:
+     **Summary:** [A summary of no more than 100 words]
+     **Main Ideas:** [At least 3 key ideas presented as bullet points]
+     **Conclusion:** [The main message or takeaway of the text]
+
+     Example
+     Text: The company reduced its costs by 20% by automating its billing process
+
+     Summary: The company automated its billing process and reduced costs by 20%
+     Main Ideas:
+     - Billing process automation
+     - 20% cost reduction
+     - Improved billing process
+
+     Conclusion: Automated repetitive processes improved efficiency
+
+     Summrize the following text: .....
+    "
 
 ===============================================================================
 FIN DEL CUESTIONARIO
